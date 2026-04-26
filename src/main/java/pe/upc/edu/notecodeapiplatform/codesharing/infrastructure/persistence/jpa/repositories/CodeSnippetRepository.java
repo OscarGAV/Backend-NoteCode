@@ -10,8 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface CodeSnippetRepository extends JpaRepository<CodeSnippet, Long> {
-    Boolean existsByShareableUrl(ShareableUrl shareableUrl);
     Optional<CodeSnippet> findByShareableUrl(ShareableUrl shareableUrl);
     List<CodeSnippet> findByUserId(Long userId);
-    List<CodeSnippet> findByIsPublicTrue();
 }

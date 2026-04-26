@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import pe.upc.edu.notecodeapiplatform.codesharing.domain.model.aggregates.CodeSnippet;
 import pe.upc.edu.notecodeapiplatform.codesharing.domain.model.queries.GetCodeSnippetByIdQuery;
 import pe.upc.edu.notecodeapiplatform.codesharing.domain.model.queries.GetCodeSnippetByShareUrlQuery;
+import pe.upc.edu.notecodeapiplatform.codesharing.domain.model.queries.GetCodeSnippetsByUserIdQuery;
 import pe.upc.edu.notecodeapiplatform.codesharing.domain.services.CodeSnippetQueryService;
 import pe.upc.edu.notecodeapiplatform.codesharing.domain.model.valueobjects.ShareableUrl;
 import pe.upc.edu.notecodeapiplatform.codesharing.infrastructure.persistence.jpa.repositories.CodeSnippetRepository;
 import pe.upc.edu.notecodeapiplatform.shared.application.exceptions.ResourceNotFoundException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,35 +53,11 @@ public class CodeSnippetQueryServiceImpl implements CodeSnippetQueryService {
                 });
     }
 
-    /* PENDING
     @Override
     public List<CodeSnippet> handleGetByUserId(GetCodeSnippetsByUserIdQuery query) {
         LOGGER.info("Searching for code snippets by user ID: {}", query.userId());
-        return Optional.of(codeSnippetRepository.findByUserId(query.userId()))
-                .filter(list -> !list.isEmpty())
-                .map(list -> {
-                    LOGGER.info("Query successful: {} code snippets found for user ID {}",
-                            list.size(), query.userId());
-                    return list;
-                })
-                .orElseThrow(() -> {
-                    LOGGER.warn("No code snippets found for user ID: {}", query.userId());
-                    return new ResourceNotFoundException("No code snippets found for user ID: " + query.userId());
-                });
+        var snippets = codeSnippetRepository.findByUserId(query.userId());
+        LOGGER.info("Found {} snippets for user ID {}", snippets.size(), query.userId());
+        return snippets;
     }
-
-    @Override
-    public List<CodeSnippet> handleGetAllPublic(GetAllPublicCodeSnippetsQuery query) {
-        LOGGER.info("Starting query for all public code snippets");
-        return Optional.of(codeSnippetRepository.findByIsPublicTrue())
-                .filter(list -> !list.isEmpty())
-                .map(list -> {
-                    LOGGER.info("Query successful: {} public code snippets found", list.size());
-                    return list;
-                })
-                .orElseThrow(() -> {
-                    LOGGER.warn("No public code snippets found in the database");
-                    return new ResourceNotFoundException("No public code snippets found in the database");
-                });
-    }*/
 }
