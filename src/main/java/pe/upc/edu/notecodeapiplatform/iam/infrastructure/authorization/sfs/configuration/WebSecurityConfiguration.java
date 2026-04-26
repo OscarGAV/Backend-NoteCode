@@ -31,13 +31,13 @@ public class WebSecurityConfiguration {
     private final AuthenticationEntryPoint unauthorizedRequestHandler;
     private final ForbiddenRequestHandler forbiddenRequestHandler;
 
-
     public WebSecurityConfiguration(
             @Qualifier("defaultUserDetailsService")
             UserDetailsService userDetailsService,
             BearerTokenService tokenService,
             BCryptHashingService hashingService,
-            AuthenticationEntryPoint unauthorizedRequestHandler, ForbiddenRequestHandler forbiddenRequestHandler) {
+            AuthenticationEntryPoint unauthorizedRequestHandler,
+            ForbiddenRequestHandler forbiddenRequestHandler) {
         this.userDetailsService = userDetailsService;
         this.tokenService = tokenService;
         this.hashingService = hashingService;
@@ -63,8 +63,7 @@ public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // CORS default configuration
-        http.cors(configurer -> configurer.configurationSource( source -> {
+        http.cors(configurer -> configurer.configurationSource(source -> {
             var cors = new CorsConfiguration();
             cors.setAllowedOrigins(List.of("*"));
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
@@ -76,12 +75,14 @@ public class WebSecurityConfiguration {
                         .authenticationEntryPoint(unauthorizedRequestHandler)
                         .accessDeniedHandler(forbiddenRequestHandler)
                 )
-                .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(customizer -> customizer
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(
                                 "/api/v1/authentication/**",
                                 "/api/v1/password-recovery/**",
                                 "/api/v1/debug/**",
+                                "/api/v1/code-snippets/share/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
@@ -94,5 +95,4 @@ public class WebSecurityConfiguration {
         http.addFilterBefore(authorizationRequestFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
 }

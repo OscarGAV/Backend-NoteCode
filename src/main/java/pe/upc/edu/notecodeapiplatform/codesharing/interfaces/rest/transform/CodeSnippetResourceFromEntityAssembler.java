@@ -10,7 +10,8 @@ public class CodeSnippetResourceFromEntityAssembler {
                 entity.getContent(),
                 entity.getLanguage().language(),
                 entity.getUserId(),
-                entity.getIsPublic()
+                entity.getIsPublic(),
+                entity.getShareUrl()
         );
     }
 }

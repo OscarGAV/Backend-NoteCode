@@ -15,6 +15,7 @@ import pe.upc.edu.notecodeapiplatform.shared.application.exceptions.InvalidValue
 import pe.upc.edu.notecodeapiplatform.shared.application.exceptions.ResourceAlreadyException;
 import pe.upc.edu.notecodeapiplatform.shared.application.exceptions.ResourceNotFoundException;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -35,15 +36,22 @@ public class UserCommandServiceImpl implements UserCommandService {
     public Optional<User> handle(SignUpCommand command) {
         if (userRepository.existsByUsername(command.username()))
             throw new ResourceAlreadyException("User already exists");
-        var roles = command.roles();
+
+        // Usar ArrayList mutable para poder hacer .add()
+        var roles = new ArrayList<>(command.roles());
+
         if (roles.isEmpty()) {
-            var role = roleRepository.findByName(Roles.ROLE_USER);
-            roles.add(role.get());
+            var defaultRole = roleRepository.findByName(Roles.ROLE_USER);
+            defaultRole.ifPresent(roles::add);
         }
-        roles = command.roles().stream()
+
+        var resolvedRoles = roles.stream()
                 .map(role -> roleRepository.findByName(role.getName())
-                        .orElseThrow(() -> new ResourceNotFoundException("Role " + command.roles() + " does not exist"))).toList();
-        var user = new User(command.username(), hashingService.encode(command.password()), roles, command.email());
+                        .orElseThrow(() -> new ResourceNotFoundException(
+                                "Role " + role.getName() + " does not exist")))
+                .toList();
+
+        var user = new User(command.username(), hashingService.encode(command.password()), resolvedRoles, command.email());
         userRepository.save(user);
         return userRepository.findByUsername(command.username());
     }
