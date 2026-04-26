@@ -7,7 +7,6 @@ public class CreateCodeSnippetCommandFromResourceAssembler {
     public static CreateCodeSnippetCommand toCommandFromResource(CreateCodeSnippetResource resource) {
         return new CreateCodeSnippetCommand(
                 resource.content(),
-                resource.language(),
                 resource.userId(),
                 resource.isPublic()
         );

@@ -8,7 +8,6 @@ public class UpdateCodeSnippetCommandFromResourceAssembler {
         return new UpdateCodeSnippetCommand(
                 snippetId,
                 resource.content(),
-                resource.language(),
                 resource.isPublic()
         );
     }

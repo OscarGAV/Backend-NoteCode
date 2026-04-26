@@ -15,9 +15,6 @@ public class CodeSnippet extends AuditableAbstractAggregateRoot<CodeSnippet> {
     private SnippetContent snippetContent;
 
     @Embedded
-    private ProgrammingLanguage language;
-
-    @Embedded
     private ShareableUrl shareableUrl;
 
     @Column
@@ -32,7 +29,6 @@ public class CodeSnippet extends AuditableAbstractAggregateRoot<CodeSnippet> {
 
     public CodeSnippet(CreateCodeSnippetCommand command) {
         this.snippetContent = new SnippetContent(command.content());
-        this.language = new ProgrammingLanguage(command.language());
         this.shareableUrl = new ShareableUrl();
         this.userId = command.userId();
         this.isPublic = command.isPublic() != null ? command.isPublic() : true;
@@ -41,9 +37,6 @@ public class CodeSnippet extends AuditableAbstractAggregateRoot<CodeSnippet> {
     public void update(UpdateCodeSnippetCommand command) {
         if (command.content() != null && !command.content().isBlank()) {
             this.snippetContent = new SnippetContent(command.content());
-        }
-        if (command.language() != null && !command.language().isBlank()) {
-            this.language = new ProgrammingLanguage(command.language());
         }
         if (command.isPublic() != null) {
             this.isPublic = command.isPublic();

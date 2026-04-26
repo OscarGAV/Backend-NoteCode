@@ -8,10 +8,10 @@ public class CodeSnippetResourceFromEntityAssembler {
         return new CodeSnippetResource(
                 entity.getId(),
                 entity.getContent(),
-                entity.getLanguage().language(),
                 entity.getUserId(),
                 entity.getIsPublic(),
-                entity.getShareUrl()
+                entity.getShareUrl(),
+                entity.getCreatedAt()
         );
     }
 }
